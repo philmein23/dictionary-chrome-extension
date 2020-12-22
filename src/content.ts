@@ -5,9 +5,7 @@ const { DICT_KEY } = process.env;
 const BASE_URL = `https://www.dictionaryapi.com/api/v3/references/collegiate/json`;
 
 async function getTermDefinitionData(term: string) {
-  const url = `${BASE_URL}/${encodeURI(
-    term?.trim() as string
-  )}?key=${DICT_KEY}`;
+  const url = `${BASE_URL}/${encodeURI(term?.trim())}?key=${DICT_KEY}`;
 
   const results = await fetch(url);
   const data = await results.json();
