@@ -1,22 +1,28 @@
 // This file is injected as a content script
+import "./content.css";
+
 const { DICT_KEY } = process.env;
 const BASE_URL = `https://www.dictionaryapi.com/api/v3/references/collegiate/json`;
 
-document.addEventListener("dblclick", async (event) => {
-  const selectedText = window.getSelection()?.toString();
-  const anchoredNode = window.getSelection()?.anchorNode;
-
-  document.querySelector(".term-definition")?.remove();
-
-  if (selectedText?.trim() === "") return;
-
+async function getTermDefinitionData(term: string) {
   const url = `${BASE_URL}/${encodeURI(
-    selectedText?.trim() as string
+    term?.trim() as string
   )}?key=${DICT_KEY}`;
 
   const results = await fetch(url);
   const data = await results.json();
   console.log(data);
+  return data[0];
+}
+
+async function createDefinitionPopup(event: MouseEvent) {
+  const selectedText = window.getSelection()?.toString();
+
+  document.querySelector(".term-definition-container")?.remove();
+
+  if (selectedText?.trim() === "") return;
+
+  const termData = await getTermDefinitionData(selectedText as string);
 
   const scrollTop = window.pageYOffset
     ? window.pageYOffset
@@ -24,18 +30,32 @@ document.addEventListener("dblclick", async (event) => {
         .scrollTop;
 
   // Get cursor position;
-  const posX = event.clientX;
-  const postY = event.clientY + scrollTop;
-  console.log(`Mouse Y: ${event.clientY} - ScrollTop: ${scrollTop}`);
-  const html = `
-    <div class="term-definition" style="height: 50px; width: 100px; background: #000; color: #FFF; position: absolute; top:${postY}; left:${posX}; ">
-      <p>Here lies the term definition</p>
+  const posX = event.clientX - 140;
+  const postY = event.clientY + scrollTop - 140;
+  console.log(
+    `Mouse X: ${event.clientX} Mouse Y: ${event.clientY} - ScrollTop: ${scrollTop}`
+  );
+
+  const listString = termData.shortdef.reduce((accum: string, curr: string) => {
+    accum += `<li>${curr}</li>`;
+    return accum;
+  }, "");
+
+  const htmlString = `
+    <div class="term-definition-container" style="position: absolute; top: ${postY}px; left: ${posX}px; ">
+      <div class="term-definition">
+        ${listString}
+      </div>  
     </div>
     `;
-  const parser = new DOMParser();
-  const newNode = parser
-    .parseFromString(html, "text/html")
-    .querySelector(".term-definition");
 
-  anchoredNode?.parentElement?.insertBefore(newNode as Node, null);
-});
+  // parses html string into dom element (node) then inserts it relative to body element
+  document.body.insertAdjacentHTML("afterbegin", htmlString);
+}
+
+/** remove event listener to prevent memory leaks */
+console.log("removing event listener...");
+document.removeEventListener("dblclick", createDefinitionPopup);
+/** then re-add event listener */
+console.log("adding event listener...");
+document.addEventListener("dblclick", createDefinitionPopup);

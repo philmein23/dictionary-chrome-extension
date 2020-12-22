@@ -1,0 +1,22 @@
+.term-definition-container {
+  background: #000;
+  color: #fff;
+  padding: 5px;
+}
+
+.term-definition {
+  position: relative;
+}
+
+.term-definition::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 12px solid transparent;
+  border-top-color: #000;
+  border-bottom: 0;
+  margin-left: -12px;
+  margin-top: 5px;
+}
