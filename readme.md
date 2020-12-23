@@ -1,4 +1,8 @@
-# Chrome Extension boilerplate created with React Typescript
+# Dictionary Chrome Extension
+
+```
+Chrome extension that allows one to retrieve definitions of selected term within any webpages.
+```
 
 ## Getting started
 

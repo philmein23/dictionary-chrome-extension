@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start": "webpack --watch"
+    "start": "webpack --watch",
+    "profile": "webpack --plugin webpack/lib/debug/ProfilingPlugin"
   },
   "keywords": [],
   "license": "ISC",

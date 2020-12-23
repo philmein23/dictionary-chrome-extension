@@ -34,6 +34,7 @@ async function createDefinitionPopup(event: MouseEvent) {
     `Mouse X: ${event.clientX} Mouse Y: ${event.clientY} - ScrollTop: ${scrollTop}`
   );
 
+  // create html listing of term definitions
   const listString = termData.shortdef.reduce((accum: string, curr: string) => {
     accum += `<li>${curr}</li>`;
     return accum;
